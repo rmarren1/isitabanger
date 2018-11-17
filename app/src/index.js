@@ -1,10 +1,10 @@
 import '@babel/polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import SearchContainer from './components/SearchContainer.react';
+import Search from './components/Search.react';
 
 ReactDOM.render(
-  <SearchContainer />,
+  <Search />,
   document.getElementById('app')
 );
 
