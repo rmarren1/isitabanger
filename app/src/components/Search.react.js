@@ -37,15 +37,14 @@ const getSuggestions = async value => {
     )
   );
 };
- 
-const getSuggestionValue = suggestion => suggestion.name;
- 
+
 class Search extends React.Component {
   constructor() {
     super();
     this.state = {
       value: '',
-      suggestions: []
+      suggestions: [],
+      inputDisabled: false
     };
   }
  
@@ -68,17 +67,10 @@ class Search extends React.Component {
       suggestions: []
     });
   };
- 
+
   render() {
-    const { classes } = this.props;
+    const { classes, onSuggestionSelected } = this.props;
     const { value, suggestions } = this.state;
- 
-    const inputProps = {
-      classes,
-      placeholder: 'Type a song.',
-      value,
-      onChange: this.onChange
-    };
  
     return (
       <div className={classes.root}>
@@ -86,10 +78,16 @@ class Search extends React.Component {
           suggestions={suggestions}
           onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
           onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-          getSuggestionValue={getSuggestionValue}
+          onSuggestionSelected={onSuggestionSelected}
+          getSuggestionValue={suggestion => suggestion.name}
           renderSuggestion={SearchSuggestion}
           renderInputComponent={SearchInput}
-          inputProps={inputProps}
+          inputProps={{
+            classes,
+            placeholder: 'Type a song.',
+            value,
+            onChange: this.onChange
+          }}
           theme={{
             suggestionsList: classes.suggestionsList,
             suggestion: classes.suggestion,
