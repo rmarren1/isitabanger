@@ -1,22 +1,15 @@
 import os
 import json
 import requests
-from functools import partialmethod
 from requests.compat import urljoin
 from base64 import b64encode
 
 CREDS_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
-    'credentials.json'
+    '../secrets/credentials.json'
 )
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
 BASE_URL = 'https://api.spotify.com/v1'
-
-ENDPOINTS = [
-    'audio-features',
-    'audio-analysis',
-    'search'
-]
 
 class SpotifyAPI:
     def __init__(self, creds_path=None):
@@ -32,20 +25,13 @@ class SpotifyAPI:
             data={'grant_type': 'client_credentials'}
         ).json()['access_token']
 
-    def get(self, *args, params={}, endpoint='' ):
-        url = '/'.join([BASE_URL, endpoint] + list(args))
+    def get(self, endpoint, params={}):
+        url = '/'.join([BASE_URL, endpoint])
         return requests.get(
             url,
             params=params,
             headers={
                 'Authorization': 'Bearer {}'.format(self.token)
             })
-
-for e in ENDPOINTS:
-    setattr(
-        SpotifyAPI,
-        e.replace('-', '_'),
-        partialmethod(SpotifyAPI.get, endpoint=e)
-    )
 
 api = SpotifyAPI(creds_path=CREDS_PATH)
