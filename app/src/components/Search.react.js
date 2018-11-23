@@ -1,10 +1,10 @@
 import React from 'react';
-import search from '../api/search';
 import Autosuggest from 'react-autosuggest';
 import Paper from '@material-ui/core/Paper';
+import { withStyles } from '@material-ui/core/styles';
 import SearchInput from './SearchInput.react';
 import SearchSuggestion from './SearchSuggestion.react';
-import { withStyles } from '@material-ui/core/styles';
+import { search } from '../api';
 
 const styles = theme => ({
   root: {
@@ -13,7 +13,8 @@ const styles = theme => ({
   },
   container: {
     position: 'relative',
-  },
+    width: '100%'
+   },
   suggestionsContainerOpen: {
     position: 'absolute',
     zIndex: 1,
@@ -68,7 +69,7 @@ class Search extends React.Component {
     });
   };
 
-  render() {
+  render = () => {
     const { classes, onSuggestionSelected } = this.props;
     const { value, suggestions } = this.state;
  

@@ -2,14 +2,21 @@ import React from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
+import * as R from 'ramda';
 
 function Suggestion(suggestion, { isHighlighted }) {
+  const albumImageLens = R.lensPath(['album', 'images', 2, 'url']);
   return (
     <MenuItem key={suggestion.id} button selected={isHighlighted} component="div">
-      <Avatar alt={suggestion.name} src={suggestion.album.images[2].url} />
+      <Avatar
+          alt={suggestion.name}
+          src={R.view(albumImageLens, suggestion)} />
       <ListItemText
         primary={suggestion.name}
-        secondary={suggestion.album.name + ' - ' + suggestion.artists[0].name} />
+        secondary={
+          suggestion.album.name + ' - ' +
+          R.join(', ', R.pluck('name', suggestion.artists))
+        } />
     </MenuItem>
   );
 }
