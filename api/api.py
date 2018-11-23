@@ -25,8 +25,10 @@ class SpotifyAPI:
             data={'grant_type': 'client_credentials'}
         ).json()['access_token']
 
-    def get(self, endpoint, params={}):
+    def get(self, endpoint, id=None, params={}):
         url = '/'.join([BASE_URL, endpoint])
+        if id:
+            url = '/'.join([url, id])
         return requests.get(
             url,
             params=params,
