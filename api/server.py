@@ -5,9 +5,11 @@ app = Flask(__name__)
 
 
 @app.route('/<endpoint>')
-def proxy(endpoint):
+@app.route('/<endpoint>/<id>')
+def proxy(**kwargs):
     r = api.get(
-        endpoint,
+        kwargs['endpoint'],
+        kwargs.get('id', None),
         request.args
     )
     excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
