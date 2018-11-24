@@ -6,7 +6,7 @@ from base64 import b64encode
 
 CREDS_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
-    '../secrets/credentials.json'
+    'secrets/credentials.json'
 )
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
 BASE_URL = 'https://api.spotify.com/v1'
@@ -16,10 +16,10 @@ class SpotifyAPI:
         with open(creds_path, 'r') as f:
             self.auth_dict = json.load(f)
         self.auth = (self.auth_dict['client_id'], self.auth_dict['client_secret'])
-        self.token = self.get_token()
+        self.refresh_token()
 
-    def get_token(self):
-        return requests.post(
+    def refresh_token(self):
+        self.token = requests.post(
             TOKEN_URL,
             auth=self.auth,
             data={'grant_type': 'client_credentials'}
