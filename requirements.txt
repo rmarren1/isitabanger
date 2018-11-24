@@ -1,0 +1,6 @@
+pandas
+pymongo
+sklearn
+Flask
+plotly
+
