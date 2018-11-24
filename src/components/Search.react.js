@@ -4,6 +4,7 @@ import Paper from '@material-ui/core/Paper';
 import { withStyles } from '@material-ui/core/styles';
 import SearchInput from './SearchInput.react';
 import SearchSuggestion from './SearchSuggestion.react';
+import debounce from 'debounce-promise';
 import { search } from '../api';
 
 const styles = theme => ({
@@ -30,7 +31,7 @@ const styles = theme => ({
   },
 });
 
-const getSuggestions = async value => {
+const getSuggestions = debounce(async value => {
   return await search(value, 10).then(
     items => (
       value.length === 0 ?
@@ -38,7 +39,7 @@ const getSuggestions = async value => {
       items
     )
   );
-};
+}, 500, { leading: true, trailing: true });
 
 class Search extends React.Component {
   constructor() {
