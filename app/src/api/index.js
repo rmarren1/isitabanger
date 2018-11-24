@@ -2,11 +2,12 @@ import qs from 'qs';
 
 const BASE_URL = 'http://localhost:5000';
 
-const search = async (q, limit) => {
+async function search(q, limit, offset=0) {
   const queryString = qs.stringify({
     type: 'track',
     q,
     limit,
+    offset
   });
   const result = await fetch(
       BASE_URL + "/search" + "?" + queryString, {
@@ -19,6 +20,23 @@ const search = async (q, limit) => {
   );
   const json = await result.json();
   return json.tracks.items;
+};
+
+const vote = async (id, banger) => {
+  const queryString = qs.stringify({
+    id: id,
+    banger: banger
+  });
+  const result = await fetch(
+      BASE_URL + "/vote" + "?" + queryString, {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            "Accept": "application/json"
+          }
+      }
+  );
+  return await result.json();
 };
 
 const getArtistInfo = async (id) => {
@@ -35,4 +53,18 @@ const getArtistInfo = async (id) => {
   return json;
 };
 
-export { getArtistInfo, search };
+const classifyBanger = async (id) => {
+  const result = await fetch(
+      BASE_URL + "/predict/" + id, {
+          method: 'GET',
+          mode: 'cors',
+          headers: {
+            "Accept": "application/json"
+          }
+      }
+  );
+  const json = await result.json();
+  return json;
+};
+
+export { getArtistInfo, search, vote, classifyBanger };
