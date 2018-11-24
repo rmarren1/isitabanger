@@ -1,10 +1,5 @@
 import qs from 'qs';
 
-const BASE_URL = process.env.NODE_ENV == 'production' ? 
-                 'https://isitabanger.herokuapp.com/api' :
-                 'http://localhost:5000/api'
-console.log(BASE_URL);
-
 async function search(q, limit, offset=0) {
   const queryString = qs.stringify({
     type: 'track',
@@ -13,7 +8,7 @@ async function search(q, limit, offset=0) {
     offset
   });
   const result = await fetch(
-      BASE_URL + "/search" + "?" + queryString, {
+      API_URL + "/search" + "?" + queryString, {
           method: 'GET',
           mode: 'cors',
           headers: {
@@ -31,7 +26,7 @@ const vote = async (id, banger) => {
     banger: banger
   });
   const result = await fetch(
-      BASE_URL + "/vote" + "?" + queryString, {
+      API_URL + "/vote" + "?" + queryString, {
           method: 'POST',
           mode: 'cors',
           headers: {
@@ -44,7 +39,7 @@ const vote = async (id, banger) => {
 
 const getArtistInfo = async (id) => {
   const result = await fetch(
-      BASE_URL + "/artists/" + id, {
+      API_URL + "/artists/" + id, {
           method: 'GET',
           mode: 'cors',
           headers: {
@@ -58,7 +53,7 @@ const getArtistInfo = async (id) => {
 
 const classifyBanger = async (id) => {
   const result = await fetch(
-      BASE_URL + "/predict/" + id, {
+      API_URL + "/predict/" + id, {
           method: 'GET',
           mode: 'cors',
           headers: {

@@ -1,5 +1,12 @@
 const webpack = require('webpack');
 
+const API_URL = {
+    production: JSON.stringify('https://isitabanger.herokuapp.com/api'),
+    development: JSON.stringify('http://localhost:5000/api')
+}
+
+var environment = process.env.NODE_ENV === 'production' ? 'production' : 'development';
+
 module.exports = {
   entry: './src/index.js',
   module: {
@@ -24,7 +31,10 @@ module.exports = {
     filename: 'bundle.js'
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.DefinePlugin({
+      'API_URL': API_URL[environment]
+    })
   ],
   devServer: {
     contentBase: './dist',
