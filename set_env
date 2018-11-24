@@ -5,3 +5,5 @@ heroku config:set MONGO_URL=${MONGO_URL}
 heroku config:set MONGO_PORT=${MONGO_PORT}
 heroku config:set SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
 heroku config:set SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+heroku config:set NODE_ENV=production
+
