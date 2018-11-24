@@ -29,10 +29,10 @@ const styles = theme => ({
         zIndex: -1
     },
     gridContainer: {
-        paddingTop: '30vh'
+        paddingTop: '20vh'
     },
     gridContainerSearching: {
-        paddingTop: '10vh',
+        paddingTop: '5vh',
         transition: 'padding-top .5s'
     },
     landingTitle: {
