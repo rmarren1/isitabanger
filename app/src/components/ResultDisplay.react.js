@@ -3,6 +3,7 @@ import Sound from 'react-sound';
 import { withStyles } from '@material-ui/core/styles';
 
 import Paper from '@material-ui/core/Paper';
+import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Slider from '@material-ui/lab/Slider';
 import Typography from '@material-ui/core/Typography';
@@ -16,11 +17,21 @@ import VolumeDownIcon from '@material-ui/icons/VolumeDown';
 import ThumbsUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbsDownIcon from '@material-ui/icons/ThumbDown';
 
+import { vote } from '../api';
+
 const styles = theme => ({
+  "@global": {
+    h1: {
+      fontSize: '10rem'
+    }
+  },
+  root: {
+    flexGrow: 1
+  },
   albumImage: {
     boxSizing: 'border-box',
-    height: '70%',
-    width: '70%'
+    height: '50%',
+    width: '50%'
   },
   controls: {
     display: 'block',
@@ -28,15 +39,17 @@ const styles = theme => ({
     paddingLeft: theme.spacing.unit,
     paddingBottom: theme.spacing.unit,
   },
-  voteContainer: {
-    textAlign: 'center'
-  },
-  paper: {
-    backgroundColor: 'rgba(40, 167, 69, 0.9)',
-    padding: 16
+  textCenter: { textAlign: 'center' },
+  paper: { backgroundColor: '#DDD', padding: 16 },
+  spotifyButton: {
+    backgroundColor: '#1DB954',
+    '&:hover': {
+      backgroundColor: '#1ed760'
+    }
   },
   banger: {
     color: 'white',
+    fontFamily: 'Bangers',
     fontSize: '5em',
     textShadow: `1px 1px #111, 2px 2px #111, 3px 3px #111, 4px 4px #111, 5px 5px #111,
                  6px 6px #111, 7px 7px #111, 8px 8px #111, 9px 9px #111, 10px 10px #111,
@@ -82,12 +95,13 @@ const SoundControls = ({togglePlay, playState, onVolumeChange, volume}) => {
       </Grid>
 
       <Grid item xs={6}>
-        <Slider min={0}
-                max={100}
-                step={1}
-                value={volume}
-                style={{top: '50%'}}
-                onChange={(event, value) => onVolumeChange(value)}/>
+        <Slider
+          min={0}
+          max={100}
+          step={1}
+          value={volume}
+          style={{top: '50%'}}
+          onChange={(event, value) => onVolumeChange(value)}/>
       </Grid>
 
       <Grid item xs={2}>
@@ -137,7 +151,8 @@ class ResultDisplay extends React.Component {
     super();
     this.state = {
       play: true,
-      volume: 80
+      volume: 80,
+      voted: false
     };
   }
 
@@ -148,7 +163,8 @@ class ResultDisplay extends React.Component {
   }
 
   vote = (banger) => {
-    console.log(banger);
+    this.setState({voted: true});
+    vote(this.props.suggestion.id, banger);
   }
 
   onVolumeChange = (volume) => {
@@ -158,34 +174,35 @@ class ResultDisplay extends React.Component {
   }
 
   render = () => {
-    const { classes, suggestion, banger } = this.props;
-    if ( banger ) {
-      return (
+    const { classes, suggestion, banger, resetState } = this.props;
+    return (
+      <div className={classes.root}>
         <ResultDisplayContainer>
           <Grid item xs={12}>
             <Typography
               className={classes.banger}
+              style={{color: banger ? 'green': 'red'}}
               variant="display4">
-                IT'S A BANGER
+                {banger ? "IT'S A BANGER" : "NOT A BANGER"}
             </Typography>
           </Grid>
-          <Grid item xs={10} sm={4}>
+          <Grid item xs={12}>
             <Paper className={classes.paper}>
               <Grid container
                     justify='center'
                     direction='column'
-                    spacing={16}
+                    spacing={8}
                     alignItems='stretch'>
                 <Grid item xs={12} style={{textAlign: 'center'}}>
                   <img className={classes.albumImage} src={suggestion.album.images[0].url}/>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.textCenter}>
                   <Typography
                     variant="headline">
                       {suggestion.name}
                   </Typography>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} className={classes.textCenter}>
                   <Typography
                     variant="subheading"
                     color="textSecondary">
@@ -193,33 +210,70 @@ class ResultDisplay extends React.Component {
                   </Typography>
                 </Grid>
                 <Grid item xs={12}>
-                  <SoundControls
-                    togglePlay={this.togglePlay}
-                    playState={this.state.play}
-                    onVolumeChange={this.onVolumeChange}
-                    volume={this.state.volume}/>
-                  <Sound
-                    url={suggestion.preview_url}
-                    playStatus={
-                      this.state.play ?
-                        Sound.status.PLAYING :
-                        Sound.status.PAUSED
-                    }
-                    volume={this.state.volume}
-                  />
+                  {
+                    suggestion.preview_url ?
+                    (
+                      <div>
+                        <SoundControls
+                          togglePlay={this.togglePlay}
+                          playState={this.state.play}
+                          onVolumeChange={this.onVolumeChange}
+                          volume={this.state.volume}/>
+                        <Sound
+                          url={suggestion.preview_url}
+                          playStatus={
+                            this.state.play ?
+                              Sound.status.PLAYING :
+                              Sound.status.PAUSED
+                          }
+                          volume={this.state.volume}/>
+                      </div>
+                    ) : (
+                      <Typography
+                        variant="body1"
+                        style={{textAlign: 'center'}}
+                      >
+                          {"No song preview available for this song"}
+                      </Typography>
+                    )
+                  }
                 </Grid>
                 <Divider/>
                 <Grid item xs={12}>
-                  <VoteControls
-                    vote={this.vote}
-                    voteContainerClassName={classes.voteContainer}/>
+                  {
+                    this.state.voted ? (
+                      <Button
+                        onClick={resetState}
+                        variant="contained"
+                        color="primary"
+                        fullWidth>
+                        Search again
+                      </Button>
+                    ) : (
+                      <VoteControls
+                        vote={this.vote}
+                        voteContainerClassName={classes.textCenter}
+                      />
+                    )
+                  }
+                </Grid>
+                <Divider/>
+                <Grid item xs={12}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    href={suggestion.external_urls.spotify}
+                    className={classes.spotifyButton}
+                    fullWidth>
+                    Play on Spotify
+                  </Button>
                 </Grid>
               </Grid>
             </Paper>
           </Grid>
         </ResultDisplayContainer>
-      )
-    }
+      </div>
+    )
   }
 };
 

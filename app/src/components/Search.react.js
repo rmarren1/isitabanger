@@ -13,8 +13,9 @@ const styles = theme => ({
   },
   container: {
     position: 'relative',
-    width: '100%'
-   },
+    width: '100%',
+    margin: '0 auto'
+  },
   suggestionsContainerOpen: {
     position: 'absolute',
     zIndex: 1,
@@ -26,7 +27,7 @@ const styles = theme => ({
     margin: 0,
     padding: 0,
     listStyleType: 'none',
-  }
+  },
 });
 
 const getSuggestions = async value => {
@@ -54,7 +55,7 @@ class Search extends React.Component {
       value: newValue
     });
   };
- 
+
   onSuggestionsFetchRequested = ({ value }) => {
     getSuggestions(value).then(suggestions => {
       this.setState({
@@ -68,6 +69,16 @@ class Search extends React.Component {
       suggestions: []
     });
   };
+   
+  storeInputReference = autosuggest => {
+    if (autosuggest !== null) {
+      this.input = autosuggest.input;
+    }
+  };
+
+  componentDidMount() {
+    this.input.focus();
+  }
 
   render = () => {
     const { classes, onSuggestionSelected } = this.props;
@@ -85,7 +96,6 @@ class Search extends React.Component {
           renderInputComponent={SearchInput}
           inputProps={{
             classes,
-            placeholder: 'Type a song.',
             value,
             onChange: this.onChange
           }}
@@ -100,6 +110,7 @@ class Search extends React.Component {
               {options.children}
             </Paper>
           )}
+          ref={this.storeInputReference}
         />
       </div>
     );

@@ -10,6 +10,7 @@ function Suggestion(suggestion, { isHighlighted }) {
     <MenuItem key={suggestion.id} button selected={isHighlighted} component="div">
       <Avatar
           alt={suggestion.name}
+          style={{borderRadius: 0}}
           src={R.view(albumImageLens, suggestion)} />
       <ListItemText
         primary={suggestion.name}
