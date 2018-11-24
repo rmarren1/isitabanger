@@ -3,4 +3,5 @@ pymongo
 sklearn
 Flask
 plotly
+gunicorn
 

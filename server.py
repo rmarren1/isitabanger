@@ -1,7 +1,8 @@
+import os
 import json
 import datetime
 import pickle as pkl
-from flask import Flask, Response, request
+from flask import Flask, Response, request, send_from_directory
 from pymongo import MongoClient
 from api import api
 
@@ -23,17 +24,23 @@ with open('model/model.pkl', 'rb') as f:
 
 
 app = Flask(__name__)
-with open('secrets/dbconn.json', 'r') as f:
-    conn = json.load(f)
-    db = MongoClient(
-        '{}:{}'.format(conn['url'], conn['port']),
-        username=conn['username'],
-        password=conn['password'],
-        authSource=conn['database']
-    ).banger
+db = MongoClient(
+    '{}:{}'.format(os.environ['MONGO_URL'], os.environ['MONGO_PORT']),
+    username=os.environ['MONGO_USERNAME'],
+    password=os.environ['MONGO_PASSWORD'],
+    authSource=os.environ['MONGO_DATABASE']
+).banger
 
-@app.route('/<endpoint>')
-@app.route('/<endpoint>/<id>')
+@app.route('/')
+def send_index():
+    return send_from_directory('dist', 'index.html')
+
+@app.route('/<path:path>')
+def send_assets(path):
+    return send_from_directory('dist', path)
+
+@app.route('/api/<endpoint>')
+@app.route('/api/<endpoint>/<id>')
 def proxy(**kwargs):
     def _get():
         return api.get(
@@ -55,7 +62,7 @@ def proxy(**kwargs):
             return Response(r.content, r.status_code, headers)
     raise Exception(r.text)
 
-@app.route('/vote', methods=['POST'])
+@app.route('/api/vote', methods=['POST'])
 def vote():
     receipt = db.votes.insert_one({
         'songId': request.args.get('id'),
@@ -71,7 +78,7 @@ def vote():
         HEADERS
     )
 
-@app.route('/predict/<id>')
+@app.route('/api/predict/<id>')
 def prediction(id):
     data = api.get('audio-features', id)
     if data.ok:

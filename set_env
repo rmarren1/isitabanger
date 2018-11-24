@@ -1,0 +1,7 @@
+heroku config:set MONGO_DATABASE=${MONGO_DATABASE}
+heroku config:set MONGO_USERNAME=${MONGO_USERNAME}
+heroku config:set MONGO_PASSWORD=${MONGO_PASSWORD}
+heroku config:set MONGO_URL=${MONGO_URL}
+heroku config:set MONGO_PORT=${MONGO_PORT}
+heroku config:set SPOTIFY_CLIENT_ID=${SPOTIFY_CLIENT_ID}
+heroku config:set SPOTIFY_CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}

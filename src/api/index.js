@@ -1,6 +1,6 @@
 import qs from 'qs';
 
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = 'http://localhost:5000/api';
 
 async function search(q, limit, offset=0) {
   const queryString = qs.stringify({
